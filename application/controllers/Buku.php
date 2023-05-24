@@ -30,6 +30,76 @@ class Buku extends RestController
 
     public function index_post()
     {
+        if ($this->_validationCheck() === false) {
+            $this->response([
+                'status' => false,
+                'message' => strip_tags(validation_errors()),
+            ], self::HTTP_BAD_REQUEST);
+        } else {
+            $data = [
+                'judul' => $this->post('judul'),
+                'penulis' => $this->post('penulis'),
+                'tahun' => $this->post('tahun'),
+                'penerbit' => $this->post('penerbit'),
+                'stok' => $this->post('stok'),
+                'harga_beli' => $this->post('harga_beli'),
+                'harga_jual' => $this->post('harga_jual'),
+            ];
+
+            $saved = $this->buku->insert_data($data);
+            if ($saved > 0) {
+                $this->response([
+                    'status' => true,
+                    'message' => 'Berhasil menambahkan data'
+                ], self::HTTP_CREATED);
+            } else {
+                $this->response([
+                    'status' => true,
+                    'message' => 'Gagal menambahkan data'
+                ], self::HTTP_BAD_REQUEST);
+            }
+        }
+    }
+
+    public function index_put()
+    {
+        $this->form_validation->set_data($this->put());
+
+        if ($this->_validationCheck() === false) {
+            $this->response([
+                'status' => false,
+                'message' => strip_tags(validation_errors()),
+            ], self::HTTP_BAD_REQUEST);
+        } else {
+            $id = $this->put('id_buku');
+            $data = [
+                'judul' => $this->put('judul'),
+                'penulis' => $this->put('penulis'),
+                'tahun' => $this->put('tahun'),
+                'penerbit' => $this->put('penerbit'),
+                'stok' => $this->put('stok'),
+                'harga_beli' => $this->put('harga_beli'),
+                'harga_jual' => $this->put('harga_jual'),
+                'kategori' => $this->put('id_kategori'),
+            ];
+
+            $updated = $this->buku->update_data($data, $id);
+            if ($updated > 0) {
+                $this->response([
+                    'status' => true,
+                    'message' => 'Berhasil memperbarui data'
+                ], self::HTTP_OK);
+            } else {
+                $this->response([
+                    'status' => true,
+                    'message' => 'Gagal memperbarui data'
+                ], self::HTTP_BAD_REQUEST);
+            }
+        }
+    }
+
+    private function _validationCheck()
+    {
         $this->form_validation->set_rules(
             'judul',
             'Judul buku',
@@ -91,34 +161,7 @@ class Buku extends RestController
                 'required' => '{field} wajib diisi',
             )
         );
-        if ($this->form_validation->run() === false) {
-            $this->response([
-                'status' => false,
-                'message' => strip_tags(validation_errors()),
-            ], self::HTTP_BAD_REQUEST);
-        } else {
-            $data = [
-                'judul' => $this->post('judul'),
-                'penulis' => $this->post('penulis'),
-                'tahun' => $this->post('tahun'),
-                'penerbit' => $this->post('penerbit'),
-                'stok' => $this->post('stok'),
-                'harga_beli' => $this->post('harga_beli'),
-                'harga_jual' => $this->post('harga_jual'),
-            ];
 
-            $saved = $this->buku->insert_data($data);
-            if ($saved > 0) {
-                $this->response([
-                    'status' => true,
-                    'message' => 'Berhasil menambahkan dataH'
-                ], self::HTTP_CREATED);
-            } else {
-                $this->response([
-                    'status' => true,
-                    'message' => 'Gagal menambahkan dataH'
-                ], self::HTTP_BAD_REQUEST);
-            }
-        }
+        return $this->form_validation->run();
     }
 }

@@ -22,4 +22,10 @@ class M_buku extends CI_Model
         $this->db->insert('book', $data);
         return $this->db->affected_rows();
     }
+
+    public function update_data($data, $id)
+    {
+        $this->db->update('book', $data, ['id' => $id]);
+        return $this->db->affected_rows();
+    }
 }
