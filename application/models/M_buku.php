@@ -28,4 +28,10 @@ class M_buku extends CI_Model
         $this->db->update('book', $data, ['id' => $id]);
         return $this->db->affected_rows();
     }
+
+    public function deleteData($id)
+    {
+        $this->db->delete('book',['id' => $id]);
+        return $this->db->affected_rows();
+    }
 }

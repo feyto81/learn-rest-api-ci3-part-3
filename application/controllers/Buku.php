@@ -164,4 +164,28 @@ class Buku extends RestController
 
         return $this->form_validation->run();
     }
+
+    public function index_delete()
+    {
+        $id = $this->delete('id_buku');
+        if ($id === null) {
+            $this->response([
+                'status' => false,
+                'message' => 'Silahkan masukkan id buku',
+            ], self::HTTP_NOT_FOUND);
+        } else {
+            $deleted = $this->buku->deleteData($id);
+            if ($deleted > 0) {
+                $this->response([
+                    'status' => true,
+                    'message' => 'Berhasil menghapus data'
+                ], self::HTTP_OK);
+            } else {
+                $this->response([
+                    'status' => true,
+                    'message' => 'Gagal menghapus data'
+                ], self::HTTP_BAD_REQUEST);
+            }
+        }
+    }
 }
